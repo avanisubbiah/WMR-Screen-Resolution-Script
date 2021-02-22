@@ -61,9 +61,13 @@ foreach ($mon_info in $monitor_info_arr) {
         $min_height = $temp
     }
     # Checking that monitor is greater than 1920x1080 60hz before making command
-    if (([int]$width -ge $min_width) -And ([int]$height -ge $min_height) -And ([int]$refresh -ge $min_refesh)) {
+    if (([int]$width -gt $min_width) -And ([int]$height -gt $min_height) -And ([int]$refresh -ge $min_refesh)) {
         $set_VR_res_cmd_arr.Add(".\ChangeScreenResolution.exe /w=$min_width /h=$min_height /d=$id /f=60") | Out-Null
         $reset_res_cmd_arr.Add(".\ChangeScreenResolution.exe /w=$width /h=$height /d=$id /f=$refresh") | Out-Null
+    # Checking if monitor is high refresh rate 1080p panel
+    } elseif (([int]$width -eq $min_width) -And ([int]$height -eq $min_height) -And ([int]$refresh -gt $min_refesh)) {
+        $set_VR_res_cmd_arr.Add(".\ChangeScreenResolution.exe /d=$id /f=60") | Out-Null
+        $reset_res_cmd_arr.Add(".\ChangeScreenResolution.exe /d=$id /f=$refresh") | Out-Null
     }
 }
 

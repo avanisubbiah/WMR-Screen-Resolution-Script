@@ -1,7 +1,3 @@
-# Starting Mixed Reality Portal and waiting 5 seconds before changing resolution
-explorer.exe shell:AppsFolder\$(get-appxpackage -name Microsoft.MixedReality.Portal | Select-Object -expandproperty PackageFamilyName)!App
-Start-Sleep -s 5
-
 $monitor_info = .\ChangeScreenResolution.exe /l
 $monitor_info = $monitor_info.split([Environment]::NewLine)
 $index = 0
@@ -68,6 +64,11 @@ foreach ($mon_info in $monitor_info_arr) {
 foreach ($set_cmd in $set_VR_res_cmd_arr) {
     Invoke-Expression $set_cmd
 }
+Start-Sleep -s 5
+
+# Starting Mixed Reality Portal and waiting 5 seconds before changing resolution
+explorer.exe shell:AppsFolder\$(get-appxpackage -name Microsoft.MixedReality.Portal | Select-Object -expandproperty PackageFamilyName)!App
+Start-Sleep -s 5
 
 # Waiting for WMR to exit
 $id = Get-Process MixedRealityPortal

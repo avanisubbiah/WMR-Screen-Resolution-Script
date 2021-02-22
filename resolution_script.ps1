@@ -53,9 +53,16 @@ foreach ($mon_info in $monitor_info_arr) {
     $height = $mon_info.Item3
     $refresh = $mon_info.Item4
 
+    # Checking for vertical monitor
+    if ([int]$height -gt [int]$width) {
+        # Flipping min height and min width
+        $temp = $min_width
+        $min_width = $min_height
+        $min_height = $temp
+    }
     # Checking that monitor is greater than 1920x1080 60hz before making command
     if (([int]$width -ge $min_width) -And ([int]$height -ge $min_height) -And ([int]$refresh -ge $min_refesh)) {
-        $set_VR_res_cmd_arr.Add(".\ChangeScreenResolution.exe /w=1920 /h=1080 /d=$id /f=60") | Out-Null
+        $set_VR_res_cmd_arr.Add(".\ChangeScreenResolution.exe /w=$min_width /h=$min_height /d=$id /f=60") | Out-Null
         $reset_res_cmd_arr.Add(".\ChangeScreenResolution.exe /w=$width /h=$height /d=$id /f=$refresh") | Out-Null
     }
 }

@@ -25,7 +25,7 @@ foreach ($ind_match in $ind_arr) {
     $mon_height = 0
 
     # Matching for monitor id
-    $found_monitor_id = $monitor_info[$ind_match] -match 'Monitor(.)'
+    $found_monitor_id = $monitor_info[$ind_match - 1] -match '\[(.)\]'
     if ($found_monitor_id) {
         $mon_id = $Matches[1]
     }

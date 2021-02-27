@@ -7,6 +7,7 @@ This is a automation of the script made here: https://github.com/kevdevrev/WMRHe
 
 ## Installation
 
+ - Make sure to disable virtual monitor pre-allocation (This is actually more significant than the optimizations this script provides)
  - Clone the repository to any directory on your PC
  - Download the `ChangeScreenResolution.exe` file from http://tools.taubenkorb.at/change-screen-resolution/
  - Move the `ChangeScreenResolution.exe` to the folder you cloned

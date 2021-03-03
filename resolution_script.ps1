@@ -85,6 +85,7 @@ Start-Sleep -s 5
 # Starting Mixed Reality Portal and waiting 5 seconds before changing resolution
 explorer.exe shell:AppsFolder\$(get-appxpackage -name Microsoft.MixedReality.Portal | Select-Object -expandproperty PackageFamilyName)!App
 Start-Sleep -s 5
+Start-Process -FilePath 'C:\Program Files (x86)\Steam\steamapps\common\SteamVR\bin\win64\vrstartup.exe'
 
 # Waiting for WMR to exit
 $id = Get-Process MixedRealityPortal

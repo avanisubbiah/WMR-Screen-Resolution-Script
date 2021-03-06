@@ -1,3 +1,40 @@
+#requires -Version 1
+function Wait-ForProcess
+{
+    param
+    (
+        $Name = 'notepad',
+
+        [Switch]
+        $IgnoreAlreadyRunningProcesses
+    )
+
+    if ($IgnoreAlreadyRunningProcesses)
+    {
+        $NumberOfProcesses = (Get-Process -Name $Name -ErrorAction SilentlyContinue).Count
+    }
+    else
+    {
+        $NumberOfProcesses = 0
+    }
+
+
+    Write-Host "Waiting for $Name" -NoNewline
+    $start_date = Get-Date
+    while ( (Get-Process -Name $Name -ErrorAction SilentlyContinue).Count -eq $NumberOfProcesses -And $start_date.AddSeconds(15) -gt (Get-Date))
+    {
+        Write-Host '.' -NoNewline
+        Start-Sleep -Milliseconds 400
+    }
+
+    Write-Host ''
+}
+
+
+# Starting Mixed Reality Portal and waiting 5 seconds before changing resolution
+explorer.exe shell:AppsFolder\$(get-appxpackage -name Microsoft.MixedReality.Portal | Select-Object -expandproperty PackageFamilyName)!App
+Start-Sleep -s 5
+
 $monitor_info = .\ChangeScreenResolution.exe /l
 $monitor_info = $monitor_info.split([Environment]::NewLine)
 $index = 0
@@ -80,18 +117,19 @@ foreach ($mon_info in $monitor_info_arr) {
 foreach ($set_cmd in $set_VR_res_cmd_arr) {
     Invoke-Expression $set_cmd
 }
-Start-Sleep -s 5
 
-# Starting Mixed Reality Portal and waiting 5 seconds before changing resolution
-explorer.exe shell:AppsFolder\$(get-appxpackage -name Microsoft.MixedReality.Portal | Select-Object -expandproperty PackageFamilyName)!App
-Start-Sleep -s 5
+# Starting Steam, waiting for steamvr_room_setup to startup and immediately terminating steamvr_room_setup
 Start-Process -FilePath 'C:\Program Files (x86)\Steam\steamapps\common\SteamVR\bin\win64\vrstartup.exe'
+Wait-ForProcess -Name steamvr_room_setup # Self terminates after 15 seconds if steamvr_room_setup never starts
+Stop-Process -Name "steamvr_room_setup"
+
 
 # Waiting for WMR to exit
-$id = Get-Process MixedRealityPortal
-$id.WaitForExit()
+$id_wmr = Get-Process MixedRealityPortal
+$id_wmr.WaitForExit()
 
 # Setting all relavent screens back to original settings
 foreach ($reset_cmd in $reset_res_cmd_arr) {
     Invoke-Expression $reset_cmd
 }
+
